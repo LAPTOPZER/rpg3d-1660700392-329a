@@ -51,7 +51,7 @@ public class LeftClick : MonoBehaviour
         //mouse up
         if (Input.GetMouseButtonUp(0))
         {
-            ReleaseSlectionBox(Input.mousePosition);
+            ReleaseSelectionBox(Input.mousePosition);
             TrySelect(Input.mousePosition);
         }
     }
@@ -114,7 +114,7 @@ public class LeftClick : MonoBehaviour
         oldAnchoredPos = boxSelection.anchoredPosition;
     }
 
-    private void ReleaseSlectionBox(Vector2 mousePos)
+    private void ReleaseSelectionBox(Vector2 mousePos)
     {
         //Debug.Log("Step 2 - " + mousePos);
         Vector2 corner1; //down left corner
