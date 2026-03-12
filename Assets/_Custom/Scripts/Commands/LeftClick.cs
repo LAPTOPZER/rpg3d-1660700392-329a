@@ -63,7 +63,9 @@ public class LeftClick : MonoBehaviour
 
         PartyManager.instance.SelectChars.Add(hero);
         hero.ToggleRingSelection(true);
+        UIManager.instance.ShowMagicToggles();
     }
+
 
     private void TrySelect(Vector2 screenPos)
     {
