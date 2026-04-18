@@ -69,6 +69,21 @@ public abstract class Characters : MonoBehaviour
     public bool IsMagicMode
     { get { return isMagicMode; } set { isMagicMode = value; } }
 
+    [Header("Inventory")]
+
+    [SerializeField]
+    protected Item[] inventoryItems;
+    public Item[] InventoryItems
+    {get { return inventoryItems; }set { inventoryItems = value; }}
+
+    [SerializeField]
+    protected Item mainWeapon;
+    public Item MainWeapon {get { return mainWeapon; }set { mainWeapon = value; }}
+
+    [SerializeField]
+    protected Item shield;
+    public Item Shield {get { return shield; }set { shield = value; }}
+
     protected VFXManager vfxManager;
     protected UIManager uiManager;
 
@@ -87,6 +102,8 @@ public abstract class Characters : MonoBehaviour
     {
         vfxManager = vfxM;
         uiManager = uiM;
+
+        inventoryItems = new Item[16];
     }
 
     public void SetState(CharState s)

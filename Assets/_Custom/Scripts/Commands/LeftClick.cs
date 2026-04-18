@@ -35,6 +35,7 @@ public class LeftClick : MonoBehaviour
             startPos = Input.mousePosition;
 
             if (EventSystem.current.IsPointerOverGameObject())
+                return;
 
             ClearyEverything();
         }
