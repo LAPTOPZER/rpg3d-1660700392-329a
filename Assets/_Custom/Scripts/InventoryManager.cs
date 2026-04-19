@@ -20,6 +20,18 @@ public class InventoryManager : MonoBehaviour
         instance = this;
     }
 
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
     public bool AddItem(Characters character, int id)
     {
         Item item = new Item(itemData[id]);
@@ -52,15 +64,33 @@ public class InventoryManager : MonoBehaviour
         PartyManager.instance.SelectChars[0].InventoryItems[index] = null;
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void SpawnDropItem(Item item, Vector3 pos)
     {
-        
+        int id;
+
+        switch (item.Type)
+        {
+            case ItemType.Consumable:
+                id = 1;
+                break;
+            default:
+                id = 0;
+                break;
+        }
+
+        GameObject itemObj = Instantiate(ItemPrefabs[id], pos, Quaternion.identity);
+        itemObj.AddComponent<ItemPick>();
+
+        ItemPick itemPick = itemObj.GetComponent<ItemPick>();
+        itemPick.Init(item, instance, PartyManager.instance);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SpawnDropInventory(Item[] items, Vector3 pos)
     {
-        
+        for (int i = 0; i < items.Length; i++)
+        {
+            if (items[i] != null)
+                SpawnDropItem(items[i], pos);
+        }
     }
 }
