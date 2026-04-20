@@ -34,6 +34,12 @@ public class InventorySlot : MonoBehaviour, IDropHandler
                 return;
         }
 
+        if (itemType == ItemType.Weapon)
+        {
+            if (itemDragA.Item.Type != itemType)
+                return;
+        }
+
         //There is an Item B in Slot B
         if (transform.childCount > 0)
         {
@@ -41,6 +47,12 @@ public class InventorySlot : MonoBehaviour, IDropHandler
             ItemDrag itemDragB = objB.GetComponent<ItemDrag>();
 
             if (slotA.ItemType == ItemType.Shield)
+            {
+                if (itemDragB.Item.Type != slotA.itemType)
+                    return;
+            }
+
+            if (slotA.ItemType == ItemType.Weapon)
             {
                 if (itemDragB.Item.Type != slotA.itemType)
                     return;

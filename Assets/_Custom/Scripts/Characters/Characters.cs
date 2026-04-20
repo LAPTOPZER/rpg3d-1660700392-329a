@@ -85,6 +85,15 @@ public abstract class Characters : MonoBehaviour
     public Item MainWeapon {get { return mainWeapon; }set { mainWeapon = value; }}
 
     [SerializeField]
+    protected Transform weaponHand;
+
+    [SerializeField]
+    protected GameObject weaponObj;
+
+    [SerializeField]
+    protected int weaponPower = 0;
+
+    [SerializeField]
     protected Item shield;
     public Item Shield {get { return shield; }set { shield = value; }}
 
@@ -96,6 +105,7 @@ public abstract class Characters : MonoBehaviour
 
     [SerializeField]
     protected int defensePower = 0;
+
 
     protected VFXManager vfxManager;
     protected UIManager uiManager;
@@ -391,6 +401,28 @@ public abstract class Characters : MonoBehaviour
             defensePower -= shield.Power;
             shield = null;
             Destroy(shieldObj);
+        }
+    }
+
+    public void EquipWeapon(Item item)
+    {
+        weaponObj = Instantiate(invManager.ItemPrefabs[item.PrefabID], weaponHand);
+
+        weaponObj.transform.localPosition = new Vector3(-7.5f, -3f, 8f);
+        weaponObj.transform.Rotate(0, 90, -90);
+
+        weaponPower += item.Power;
+        mainWeapon = item;
+        
+    }
+
+    public void UnEquipWeapon()
+    {
+        if (mainWeapon != null)
+        {
+            weaponPower -= mainWeapon.Power;
+            mainWeapon = null;
+            Destroy(weaponObj);
         }
     }
 }
