@@ -11,7 +11,7 @@ public class InventoryManager : MonoBehaviour
     private ItemData[] itemData;
     public ItemData[] ItemData {get { return itemData; }set { itemData = value; }}
 
-    public const int MAXSLOT = 16;
+    public const int MAXSLOT = 17;
 
     public static InventoryManager instance;
 
@@ -54,6 +54,13 @@ public class InventoryManager : MonoBehaviour
             return;
 
         PartyManager.instance.SelectChars[0].InventoryItems[index] = item;
+
+        switch(index)
+        {
+            case 16:
+                PartyManager.instance.SelectChars[0].EquipShield(item);
+                break;
+        }
     }
 
     public void RemoveItemInBag(int index)
@@ -62,6 +69,13 @@ public class InventoryManager : MonoBehaviour
             return;
 
         PartyManager.instance.SelectChars[0].InventoryItems[index] = null;
+
+        switch (index)
+        {
+            case 16:
+                PartyManager.instance.SelectChars[0].UnEquipShield();
+                break;
+        }
     }
 
     private void SpawnDropItem(Item item, Vector3 pos)

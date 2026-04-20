@@ -9,6 +9,11 @@ public class InventorySlot : MonoBehaviour, IDropHandler
     { get { return id; } set { id = value; } }
 
     [SerializeField]
+    private ItemType itemType;
+    public ItemType ItemType
+        { get { return itemType; } set { itemType = value; } }
+
+    [SerializeField]
     private InventoryManager inventoryManager;
 
     void Start()
@@ -23,8 +28,11 @@ public class InventorySlot : MonoBehaviour, IDropHandler
         ItemDrag itemDragA = objA.GetComponent<ItemDrag>();
         InventorySlot slotA = itemDragA.IconParent.GetComponent<InventorySlot>();
 
-        //Remove Item A from Slot A
-        inventoryManager.RemoveItemInBag(slotA.ID);
+        if (itemType == ItemType.Shield)
+        {
+            if (itemDragA.Item.Type != itemType)
+                return;
+        }
 
         //There is an Item B in Slot B
         if (transform.childCount > 0)
@@ -32,10 +40,27 @@ public class InventorySlot : MonoBehaviour, IDropHandler
             GameObject objB = transform.GetChild(0).gameObject;
             ItemDrag itemDragB = objB.GetComponent<ItemDrag>();
 
+            if (slotA.ItemType == ItemType.Shield)
+            {
+                if (itemDragB.Item.Type != slotA.itemType)
+                    return;
+            }
+
+            //Remove Item A from Slot A
+            inventoryManager.RemoveItemInBag(slotA.ID);
+
             //Set Item B on Slot A
             itemDragB.transform.SetParent(itemDragA.IconParent);
             itemDragB.IconParent = itemDragA.IconParent;
             inventoryManager.SaveItemInBag(slotA.ID, itemDragB.Item);
+
+            //Remove Item B from Slot B
+            inventoryManager.RemoveItemInBag(id);
+        }
+        else //Slot B is blank
+        {
+            //Remove Item A from Slot A
+            inventoryManager.RemoveItemInBag(slotA.ID) ;
         }
 
         //Set Item A on Slot B

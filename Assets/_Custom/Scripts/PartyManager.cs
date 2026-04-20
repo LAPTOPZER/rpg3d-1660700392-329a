@@ -33,15 +33,19 @@ public class PartyManager : MonoBehaviour
         member[0].MagicSkills.Add(new Magic(VFXManager.instance.MagicData[0]));
         member[1].MagicSkills.Add(new Magic(VFXManager.instance.MagicData[1]));
 
+        //Male
         InventoryManager.instance.AddItem(member[0], 0); //Health Potion
         InventoryManager.instance.AddItem(member[0], 3); //Sword B
         InventoryManager.instance.AddItem(member[0], 5); //Dagger
+        InventoryManager.instance.AddItem(member[0], 2); //Shield A
         InventoryManager.instance.AddItem(member[0], 4); //Shield B
         InventoryManager.instance.AddItem(member[0], 10); //Key
         InventoryManager.instance.AddItem(member[0], 9); //Turkey
 
+        //Female
         InventoryManager.instance.AddItem(member[1], 0); //Health Potion
         InventoryManager.instance.AddItem(member[1], 1); //Sword A
+        InventoryManager.instance.AddItem(member[1], 4); //Shield B
         InventoryManager.instance.AddItem(member[1], 2); //Shield A
         InventoryManager.instance.AddItem(member[1], 8); //Steak
         InventoryManager.instance.AddItem(member[1], 7); //BoostPotion
