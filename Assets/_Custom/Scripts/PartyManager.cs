@@ -13,6 +13,10 @@ public class PartyManager : MonoBehaviour
     private List<Characters> selectChars = new List<Characters>();
     public List<Characters> SelectChars { get { return selectChars; } }
 
+    [SerializeField]
+    private List<Quest> questsList = new List<Quest>();
+    public List<Quest> QuestList { get { return questsList; } }
+
     public static PartyManager instance;
 
     private void Awake()

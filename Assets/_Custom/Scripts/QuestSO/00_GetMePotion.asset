@@ -15,8 +15,8 @@ MonoBehaviour:
   questId: 0
   type: 0
   status: 0
-  questName: 
-  questDetail: 
+  questName: Get Me a Potion
+  questDetail: Give Ben a bottle of blue health potion
   questItemId: 0
   questDialogue:
   - Hello, adventurers. How are you?
@@ -27,8 +27,8 @@ MonoBehaviour:
   - Go ahead, I'm listening.
   answerAccept: Yes. I shall find it for you.
   answerReject: Sorry, I coudn,t help you.
-  rewardItemId: 0
-  rewardExp: 0
-  questionInProgress: 
-  answerFinish: 
-  answerNotFinish: 
+  rewardItemId: 11
+  rewardExp: 150
+  questionInProgress: Have you gotten any blue potion
+  answerFinish: Here it is.
+  answerNotFinish: Not yet, please wait.
