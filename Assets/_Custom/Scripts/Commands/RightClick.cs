@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 public class RightClick : MonoBehaviour
 {
@@ -51,6 +52,9 @@ public class RightClick : MonoBehaviour
                 case "Enemy":
                     CommandToAttack(hit, PartyManager.instance.SelectChars);
                     break;
+                case "NPC":
+                    CommandTalkToNPC(hit, PartyManager.instance.SelectChars);
+                    break;
             }
         }
     }
@@ -73,5 +77,16 @@ public class RightClick : MonoBehaviour
         {
             h.ToAttackCharacter(target);
         }
+    }
+
+    private void CommandTalkToNPC(RaycastHit hit, List<Characters> heroes)
+    {
+        Characters npc = hit.collider.GetComponent<Characters>();
+        Debug.Log("Talk to NPC: " + npc);
+
+        if (heroes.Count <= 0)
+            return;
+
+        heroes[0].ToTalkToNPC(npc);
     }
 }
