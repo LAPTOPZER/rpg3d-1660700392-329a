@@ -1,4 +1,4 @@
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
@@ -321,11 +321,26 @@ public class UIManager : MonoBehaviour
         else //Check for New Quest
         {
             Quest newQuest = QuestManager.instance.CheckForQuest(npc, QuestStatus.New);
-            //Debug.Log(newQuest);
 
-            if (newQuest != null) //There is a new Quest
+            if (newQuest != null) // มีเควสต์ใหม่
             {
                 StartQuestDialogue(newQuest);
+            }
+            else // !!! จุดแก้ปัญหา: ไม่มีทั้งเควสต์กำลังทำ และไม่มีเควสต์ใหม่ (ส่งแล้ว หรือปฏิเสธไปแล้ว)
+            {
+                // 1. แสดงประโยคพูดทั่วไปของ NPC ป้องกันไม่ให้กล่องว่างเปล่า
+                dialogueText.text = "Thank you for help.";
+
+                // 2. เคลียร์ปุ่มอื่นๆ ทั้งหมดออกไปเพื่อไม่ให้ปุ่มทับซ้อนกัน
+                btnNext.SetActive(false);
+                btnAccept.SetActive(false);
+                btnReject.SetActive(false);
+                btnFinish.SetActive(false);
+
+                // 3. เปิดปุ่ม "NotFinish" หรือปุ่มที่มีฟังก์ชันปิดหน้าต่างสนทนา
+                // ในที่นี้เราจะเปลี่ยนปุ่ม NotFinish มาเป็นปุ่ม "จากลา" ชั่วคราวเพื่อให้กดยกเลิกการคุยได้
+                btnNotFinishText.text = "Bye";
+                btnNotFinish.SetActive(true);
             }
         }
     }
@@ -385,10 +400,19 @@ public class UIManager : MonoBehaviour
 
         if (success)
         {
+            // เก็บข้อมูลรางวัลปัจจุบันไว้ก่อนที่จะรัน NpcGiveReward (เนื่องจากฟังก์ชันนั้นจะเปลี่ยนสถานะเควสต์เป็น Finish)
+            Quest currentQuest = QuestManager.instance.CurQuest;
+
             if (QuestManager.instance.NpcGiveReward())
             {
                 Debug.Log("Quest Completed");
                 ToggleDialogueBox(false);
+
+                // ดึง ItemData และ Exp จากคลาสเควสต์มาสั่งให้ Pop-up ทำงาน
+                // (ต้องแปลงดึงข้อมูล ItemData ผ่าน InventoryManager ด้วย RewardItemId ของเควสต์)
+                ItemData rewardItem = InventoryManager.instance.ItemData[currentQuest.RewardItemId];
+
+                RewardPopupUI.instance.ShowReward(rewardItem, currentQuest.RewardExp);
             }
         }
     }
