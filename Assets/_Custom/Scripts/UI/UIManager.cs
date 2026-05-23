@@ -194,6 +194,7 @@ public class UIManager : MonoBehaviour
     {
         if (!inventoryPanel.activeInHierarchy)
         {
+            HideAllPanels();
             inventoryPanel.SetActive(true);
             blackImage.SetActive(true);
             ShowInventory();
@@ -374,6 +375,7 @@ public class UIManager : MonoBehaviour
 
     public void PrepareDialogueBox(Npc npc)
     {
+        HideAllPanels();
         ClearDialogueBox();
         SetupDialoguePanel(npc);
         ToggleDialogueBox(true);
@@ -451,6 +453,14 @@ public class UIManager : MonoBehaviour
         for (int i = 0; i < PartyManager.instance.Members.Count; i++)
         {
             toggleAvatar[i].gameObject.SetActive(true);
+
+            Image avatarImage = toggleAvatar[i].GetComponentInChildren<Image>();
+
+            if (avatarImage != null)
+            {
+                // นำภาพ AvatarPic จากสมาชิกปาร์ตี้ลำดับที่ i มาใส่
+                avatarImage.sprite = PartyManager.instance.Members[i].AvatarPic;
+            }
         }
         toggleAvatar[0].isOn = true; //Select first hero
     }
@@ -461,6 +471,11 @@ public class UIManager : MonoBehaviour
         {
             //Debug.Log($"is On: {i}");
             PartyManager.instance.SelectSingleHeroByToggle(i);
+
+            if (charPanel.activeInHierarchy)
+            {
+                ShowCharPanel(); // สั่งรันฟังก์ชันดึงค่าพลังของตัวละครใหม่มาวาดบน Text ทันที
+            }
         }
         else //isOn is false
         {
@@ -482,7 +497,10 @@ public class UIManager : MonoBehaviour
         if (PartyManager.instance.SelectChars.Count == 0)
             return;
 
-        Hero hero = (Hero)PartyManager.instance.SelectChars[0];
+        int lastIndex = PartyManager.instance.SelectChars.Count - 1;
+        Hero hero = (Hero)PartyManager.instance.SelectChars[lastIndex];
+
+        //Hero hero = (Hero)PartyManager.instance.SelectChars[0];
 
         charNameText.text = hero.CharName;
 
@@ -511,6 +529,8 @@ public class UIManager : MonoBehaviour
     {
         if (!charPanel.activeInHierarchy)
         {
+            HideAllPanels();
+
             charPanel.SetActive(true);
             blackImage.SetActive(true);
             ShowCharPanel();
@@ -521,5 +541,26 @@ public class UIManager : MonoBehaviour
             blackImage.SetActive(false);
             ClearCharPanel();
         }
+    }
+
+    private void HideAllPanels()
+    {
+        //CharPanel
+        if (charPanel != null) charPanel.SetActive(false);
+        if (blackImage != null) blackImage.SetActive(false);
+        ClearCharPanel(); // ล้างข้อมูลข้อความตัวละครเดิม
+
+        //Inventory
+        if (inventoryPanel != null) inventoryPanel.SetActive(false);
+        ClearInventory();
+
+        //NPC
+        if (npcDialoguePanel != null)
+        {
+            downPanel.SetActive(true);
+            npcDialoguePanel.SetActive(false);
+            togglePauseUnpause.isOn = false;
+        }
+        ClearDialogueBox();
     }
 }
