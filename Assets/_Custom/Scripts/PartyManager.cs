@@ -17,6 +17,10 @@ public class PartyManager : MonoBehaviour
     private List<Quest> questsList = new List<Quest>();
     public List<Quest> QuestList { get { return questsList; } }
 
+    [SerializeField]
+    private int partyMoney = 1000;
+    public int PartyMoney { get { return partyMoney; } set { partyMoney = value; } }
+
     public static PartyManager instance;
 
     private void Awake()

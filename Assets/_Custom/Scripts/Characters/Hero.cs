@@ -75,7 +75,10 @@ public class Hero : Characters
 
             Npc npc = curCharTarget.GetComponent<Npc>();
 
-            uiManager.PrepareDialogueBox(npc);
+            if (npc.IsShopKeeper)
+                uiManager.PrepareShopPanel(npc, this);
+            else
+                uiManager.PrepareDialogueBox(npc);
         }
     }
 }
