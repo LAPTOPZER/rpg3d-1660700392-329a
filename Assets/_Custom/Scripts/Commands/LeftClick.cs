@@ -38,14 +38,14 @@ public class LeftClick : MonoBehaviour
             if (EventSystem.current.IsPointerOverGameObject())
                 return;
 
-            //ClearyEverything();
+            ClearyEverything();
         }
 
         //mouse hold down
         if (Input.GetMouseButton(0))
         {
-            if (EventSystem.current.IsPointerOverGameObject())
-                return;
+            //if (EventSystem.current.IsPointerOverGameObject())
+            //    return;
 
             UpdateSelectionBox(Input.mousePosition);
         }
@@ -58,7 +58,7 @@ public class LeftClick : MonoBehaviour
         }
     }
 
-    private void SelectCharacter(RaycastHit hit)
+    private int SelectCharacter(RaycastHit hit)
     {
         ClearyEverything();
 
@@ -68,6 +68,7 @@ public class LeftClick : MonoBehaviour
 
         int i = PartyManager.instance.FindIndexFromClass(hero);
         UIManager.instance.ToggleAvatar[i].isOn = true;
+        return i;
         //PartyManager.instance.SelectChars.Add(hero);
         //hero.ToggleRingSelection(true);
         //UIManager.instance.ShowMagicToggles();
@@ -79,16 +80,21 @@ public class LeftClick : MonoBehaviour
         Ray ray = cam.ScreenPointToRay(screenPos);
         RaycastHit hit;
 
+        int i = 0;
+
         if (Physics.Raycast(ray, out hit, 1000, layerMask))
         {
             switch (hit.collider.tag)
             {
                 case "Player":
                 case "Hero":
-                    SelectCharacter(hit);
+                    i = SelectCharacter(hit);
                     break;
             }
         }
+
+        if (PartyManager.instance.SelectChars.Count == 0)
+            UIManager.instance.ToggleAvatar[i].isOn = true;
     }
 
     private void ClearRingSelection()
@@ -140,11 +146,15 @@ public class LeftClick : MonoBehaviour
         foreach (Characters member in PartyManager.instance.Members)
         {
             Vector2 unitPos = cam.WorldToScreenPoint(member.transform.position);
+
             if ((unitPos.x > corner1.x && unitPos.x < corner2.x)
                 && (unitPos.y > corner1.y && unitPos.y < corner2.y))
             {
-                PartyManager.instance.SelectChars.Add(member);
-                member.ToggleRingSelection(true);
+                //PartyManager.instance.SelectChars.Add(member);
+                //member.ToggleRingSelection(true);
+
+                int i = PartyManager.instance.FindIndexFromClass(member);
+                UIManager.instance.ToggleAvatar[i].isOn = true;
             }
         }
         boxSelection.sizeDelta = new Vector2(0,0); //clear Selection Box's size

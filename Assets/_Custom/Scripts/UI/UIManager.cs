@@ -485,7 +485,7 @@ public class UIManager : MonoBehaviour
     {
         if (toggleAvatar[i].isOn)
         {
-            //Debug.Log($"is On: {i}");
+            Debug.Log($"is On: {i}");
             PartyManager.instance.SelectSingleHeroByToggle(i);
 
             if (charPanel.activeInHierarchy)
@@ -495,7 +495,7 @@ public class UIManager : MonoBehaviour
         }
         else //isOn is false
         {
-            //Debug.Log($"is Off: {i}");
+            Debug.Log($"is Off: {i}");
             PartyManager.instance.UnSelectSingleHeroByToggle(i);
         }
     }
