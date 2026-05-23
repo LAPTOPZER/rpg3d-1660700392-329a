@@ -604,12 +604,14 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    //Hide Panel
     private void HideAllPanels()
     {
+        if (blackImage != null) blackImage.SetActive(false);
+
         //CharPanel
         if (charPanel != null) charPanel.SetActive(false);
-        if (blackImage != null) blackImage.SetActive(false);
-        ClearCharPanel(); // ล้างข้อมูลข้อความตัวละครเดิม
+        ClearCharPanel();
 
         //Inventory
         if (inventoryPanel != null) inventoryPanel.SetActive(false);
@@ -623,6 +625,10 @@ public class UIManager : MonoBehaviour
             togglePauseUnpause.isOn = false;
         }
         ClearDialogueBox();
+
+        //Shop
+        if (shopPanel !=null) shopPanel.SetActive(false);
+        ClearShopPanel();
     }
 
     public void MapToggleRemove()
@@ -765,9 +771,91 @@ public class UIManager : MonoBehaviour
 
     public void PrepareShopPanel(Npc npc, Hero hero)
     {
+        HideAllPanels();
         ClearShopPanel();
         SetupShopItems(npc);
         SetupPartyItems(hero);
         ToggleShopPanel(true);
+    }
+
+    public void SellItemToShop()
+    {
+        totalPrice = 0;
+        List<GameObject> toSellCardList = new List<GameObject>();
+
+        foreach (GameObject obj in partyItemList)
+        {
+            ItemInShop itemInShop = obj.GetComponent<ItemInShop>();
+            if (itemInShop.IconToggle.isOn)
+            {
+                toSellCardList.Add(obj);
+                totalPrice += (int)(itemInShop.Item.NormalPrice * 0.8f);
+            }
+        }
+
+        if (toSellCardList.Count == 0)
+            return;
+
+        if (curShopNpc.NpcMoney >= totalPrice)
+        {
+            foreach (GameObject obj in toSellCardList)
+            {
+                obj.transform.SetParent(shopListParent);
+                ItemInShop itemInShop = obj.GetComponent<ItemInShop>();
+                itemInShop.IconToggle.isOn = false;
+                itemInShop.SetupItemInShop(this, 1f);
+
+                partyItemList.Remove(obj);
+                shopItemList.Add(obj);
+                curShopHero.InventoryItems[itemInShop.ID] = null;
+                curShopNpc.ShopItems.Add(itemInShop.Item);
+            }
+
+            curShopNpc.NpcMoney -= totalPrice;
+            PartyManager.instance.PartyMoney += totalPrice;
+
+            shopMoneyText.text = curShopNpc.NpcMoney.ToString();
+            heroMoneyText.text = PartyManager.instance.PartyMoney.ToString();
+        }
+    }
+
+    public void BuyItemFromShop()
+    {
+        totalCost = 0;
+        List<GameObject> toBuyCardList = new List<GameObject>();
+
+        foreach (GameObject obj in shopItemList)
+        {
+            ItemInShop itemInShop = obj.GetComponent<ItemInShop>();
+            if (itemInShop.IconToggle.isOn)
+            {
+                toBuyCardList.Add(obj);
+                totalCost += itemInShop.Item.NormalPrice;
+            }
+        }
+
+        if (toBuyCardList.Count == 0)
+            return;
+
+        if (PartyManager.instance.PartyMoney >= totalCost)
+        {
+            foreach (GameObject obj in toBuyCardList)
+            {
+                obj.transform.SetParent(partyListParent);
+                ItemInShop itemInShop = obj.GetComponent<ItemInShop>();
+                itemInShop.IconToggle.isOn = false;
+                itemInShop.SetupItemInShop(this, 0.8f);
+
+                shopItemList.Remove(obj);
+                partyItemList.Add(obj);
+                curShopNpc.ShopItems.Remove(itemInShop.Item);
+                curShopHero.SaveItemInInventory(itemInShop.Item);
+            }
+            curShopNpc.NpcMoney += totalCost;
+            PartyManager.instance.PartyMoney -= totalCost;
+
+            shopMoneyText.text = curShopNpc.NpcMoney.ToString();
+            heroMoneyText.text = PartyManager.instance.PartyMoney.ToString();
+        }
     }
 }
