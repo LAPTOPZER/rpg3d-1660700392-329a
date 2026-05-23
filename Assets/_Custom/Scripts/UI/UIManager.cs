@@ -92,6 +92,25 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private TMP_Text btnNotFinishText;
 
+    [SerializeField]
+    private Toggle[] toggleAvatar;
+    public Toggle[] ToggleAvatar { get { return toggleAvatar; } set { toggleAvatar = value; } }
+
+    [SerializeField]
+    private GameObject charPanel;
+
+    [SerializeField]
+    private TMP_Text charNameText;
+
+    [SerializeField]
+    private TMP_Text statText;
+
+    [SerializeField]
+    private TMP_Text abilityText;
+
+    [SerializeField]
+    private Image heroImage;
+
     public static UIManager instance;
 
     private void Awake()
@@ -102,6 +121,7 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         InitSlots();
+        MapToggleAvatar();
     }
 
     private void Update()
@@ -118,7 +138,7 @@ public class UIManager : MonoBehaviour
         {
             AttackAI ai = member.gameObject.GetComponent<AttackAI>();
 
-            if (ai != null) 
+            if (ai != null)
                 ai.enabled = isOn;
         }
     }
@@ -126,7 +146,7 @@ public class UIManager : MonoBehaviour
     public void SelectAll()
     {
         PartyManager.instance.SelectChars.Clear();
-        
+
         foreach (Characters member in PartyManager.instance.Members)
         {
             if (member.CurHP > 0)
@@ -226,7 +246,7 @@ public class UIManager : MonoBehaviour
 
     private void InitSlots()
     {
-        for(int i = 0; i < InventoryManager.MAXSLOT; i++)
+        for (int i = 0; i < InventoryManager.MAXSLOT; i++)
         {
             slots[i].GetComponent<InventorySlot>().ID = i;
         }
@@ -421,5 +441,85 @@ public class UIManager : MonoBehaviour
     {
         Debug.Log("Cannot Finish Quest");
         ToggleDialogueBox(false);
+    }
+
+    public void MapToggleAvatar()
+    {
+        foreach (Toggle t in toggleAvatar)
+            t.gameObject.SetActive(false);
+
+        for (int i = 0; i < PartyManager.instance.Members.Count; i++)
+        {
+            toggleAvatar[i].gameObject.SetActive(true);
+        }
+        toggleAvatar[0].isOn = true; //Select first hero
+    }
+
+    public void SelectHeroByAvatar(int i) //map with toggle
+    {
+        if (toggleAvatar[i].isOn)
+        {
+            //Debug.Log($"is On: {i}");
+            PartyManager.instance.SelectSingleHeroByToggle(i);
+        }
+        else //isOn is false
+        {
+            //Debug.Log($"is Off: {i}");
+            PartyManager.instance.UnSelectSingleHeroByToggle(i);
+        }
+    }
+
+    public void ClearCharPanel()
+    {
+        charNameText.text = "";
+        statText.text = "";
+        abilityText.text = "";
+        heroImage.sprite = null;
+    }
+
+    public void ShowCharPanel()
+    {
+        if (PartyManager.instance.SelectChars.Count == 0)
+            return;
+
+        Hero hero = (Hero)PartyManager.instance.SelectChars[0];
+
+        charNameText.text = hero.CharName;
+
+        string stat = string.Format
+            ("Level: {0}\nExperience: {1}\n" +
+            "Attack Damage: {2}\nDefense Power: {3}"
+            , hero.Level, hero.Exp,
+            hero.AttackDamage, hero.DefensePower);
+
+        statText.text = stat;
+
+        string ability = string.Format
+            ("Strength: {0}\nDexterity: {1}\n" +
+            "Constitution: {2}\nIntelligence: {3}\n" +
+            "Wisdom: {4}\nCharisma: {5}"
+            , hero.Strength, hero.Dexterity,
+            hero.Constitution, hero.Intelligence,
+            hero.Wisdom, hero.Charisma);
+
+        abilityText.text = ability;
+
+        heroImage.sprite = hero.AvatarPic;
+    }
+
+    public void ToggleCharPanel()
+    {
+        if (!charPanel.activeInHierarchy)
+        {
+            charPanel.SetActive(true);
+            blackImage.SetActive(true);
+            ShowCharPanel();
+        }
+        else
+        {
+            charPanel.SetActive(false);
+            blackImage.SetActive(false);
+            ClearCharPanel();
+        }
     }
 }

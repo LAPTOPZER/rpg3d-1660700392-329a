@@ -57,6 +57,7 @@ public abstract class Characters : MonoBehaviour
     public float AttackRange { get { return attackRange; } }
     [SerializeField]
     protected int attackDamage = 3;
+    public int AttackDamage { get { return attackDamage; } }
 
     [SerializeField]
     protected float attackCoolDown = 2f;
@@ -114,6 +115,7 @@ public abstract class Characters : MonoBehaviour
 
     [SerializeField]
     protected int defensePower = 0;
+    public int DefensePower { get { return defensePower; } }
 
 
     protected VFXManager vfxManager;
