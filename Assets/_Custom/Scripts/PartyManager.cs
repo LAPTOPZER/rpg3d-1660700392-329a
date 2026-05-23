@@ -137,4 +137,15 @@ public class PartyManager : MonoBehaviour
             member[i].ToggleRingSelection(false);
         }
     }
+
+    public void RemoveHeroFromParty(int id)
+    {
+        if (id == -1 || id == 0)
+            return;
+
+        if (selectChars.Contains(member[id]))
+            selectChars.Remove(member[id]);
+
+        member.Remove(member[id]);
+    }
 }
