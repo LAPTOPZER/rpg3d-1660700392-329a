@@ -20,6 +20,20 @@ public class VFXManager : MonoBehaviour
         instance = this;
     }
 
+    private void OnEnable()
+    {
+        MyActions.onLoadMagic += LoadMagic;
+        MyActions.onShootMagic += ShootMagic;
+        MyActions.onCreateMagic += CreateMagic;
+    }
+
+    private void OnDisable()
+    {
+        MyActions.onLoadMagic -= LoadMagic;
+        MyActions.onShootMagic -= ShootMagic;
+        MyActions.onCreateMagic -= CreateMagic;
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -51,5 +65,10 @@ public class VFXManager : MonoBehaviour
         GameObject objShoot = Instantiate(magicVFX[id], posA, Quaternion.identity);
         objShoot.transform.position = Vector3.LerpUnclamped(posA, posB, time);
         Destroy(objShoot, time);
+    }
+
+    public Magic CreateMagic(int id)
+    {
+        return new Magic(magicData[id]);
     }
 }

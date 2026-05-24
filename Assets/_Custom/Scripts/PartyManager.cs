@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.TextCore.Text;
 
 public class PartyManager : MonoBehaviour
@@ -74,17 +75,14 @@ public class PartyManager : MonoBehaviour
 
     void Update()
     {
-        //if (Input.GetKeyDown(KeyCode.M))
-        //{
-
-        //    if (selectChars.Count > 0)
-        //    {
-
-        //        selectChars[0].IsMagicMode = true;
-        //        selectChars[0].CurMagicCast = selectChars[0].MagicSkills[0];
-        //    }
-
-        //}
+        if (Keyboard.current.mKey.wasPressedThisFrame)
+        {
+            if (selectChars.Count > 0)
+            {
+                selectChars[0].IsMagicMode = true;
+                selectChars[0].CurMagicCast = selectChars[0].MagicSkills[0];
+            }
+        }
     }
 
     public void SelectSingleHero(int i)
@@ -200,8 +198,7 @@ public class PartyManager : MonoBehaviour
         if (member.Count >= 6)
             return false;
 
-        hero.CharInit(VFXManager.instance, UIManager.instance,
-            InventoryManager.instance, this);
+        hero.CharInit(UIManager.instance, InventoryManager.instance, this);
 
         member.Add(hero);
         return true;
@@ -270,15 +267,15 @@ public class PartyManager : MonoBehaviour
                 heroObj.gameObject.tag = "Player";
 
             Hero hero = heroObj.GetComponent<Hero>();
-            hero.CharInit(VFXManager.instance, UIManager.instance,
-                InventoryManager.instance, this);
+            hero.CharInit(UIManager.instance, InventoryManager.instance, this);
             hero.CurHP = heroData[i].curHp;
             hero.MagicSkills.Clear();
 
             for (int j = 0; j < heroData[i].magicIds.Count; j++)
             {
                 int magicId = heroData[i].magicIds[j];
-                hero.MagicSkills.Add(new Magic(VFXManager.instance.MagicData[magicId]));
+                if (MyActions.onCreateMagic != null)
+                    hero.MagicSkills.Add(MyActions.onCreateMagic(magicId));
             }
 
             for (int k = 0; k < heroData[i].inventoryItemIds.Length; k++)

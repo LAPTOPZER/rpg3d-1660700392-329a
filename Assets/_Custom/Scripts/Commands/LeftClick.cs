@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class LeftClick : MonoBehaviour
@@ -31,30 +32,30 @@ public class LeftClick : MonoBehaviour
     void Update()
     {
         //mouse down
-        if (Input.GetMouseButtonDown(0))
+        if (Mouse.current.leftButton.wasPressedThisFrame)
         {
-            startPos = Input.mousePosition;
+            startPos = Mouse.current.position.value;
 
             if (EventSystem.current.IsPointerOverGameObject())
                 return;
 
-            ClearyEverything();
+            //ClearyEverything();
         }
 
         //mouse hold down
-        if (Input.GetMouseButton(0))
+        if (Mouse.current.leftButton.isPressed)
         {
             //if (EventSystem.current.IsPointerOverGameObject())
             //    return;
 
-            UpdateSelectionBox(Input.mousePosition);
+            UpdateSelectionBox(Mouse.current.position.value);
         }
         
         //mouse up
-        if (Input.GetMouseButtonUp(0))
+        if (Mouse.current.leftButton.wasReleasedThisFrame)
         {
-            ReleaseSelectionBox(Input.mousePosition);
-            TrySelect(Input.mousePosition);
+            ReleaseSelectionBox(Mouse.current.position.value);
+            TrySelect(Mouse.current.position.value);
         }
     }
 
@@ -90,11 +91,25 @@ public class LeftClick : MonoBehaviour
                 case "Hero":
                     i = SelectCharacter(hit);
                     break;
+                case "Item":
+                    SelectItem(hit);
+                    break;
             }
         }
 
         if (PartyManager.instance.SelectChars.Count == 0)
             UIManager.instance.ToggleAvatar[i].isOn = true;
+    }
+
+    private void SelectItem(RaycastHit hit)
+    {
+        ItemPick itemPick = hit.collider.GetComponent<ItemPick>();
+
+        if (PartyManager.instance.SelectChars.Count == 0)
+            UIManager.instance.ToggleAvatar[0].isOn = true;
+
+        if (itemPick != null)
+            itemPick.PickUpItem();
     }
 
     private void ClearRingSelection()

@@ -145,14 +145,24 @@ public class Hero : Characters
             nextExp = level * 30;
             UpdateStat();
 
+            Magic magic;
+
             switch (level)
             {
                 case 5:
-                    magicSkills.Add(new Magic(vfxManager.MagicData[0]));
+                    if (MyActions.onCreateMagic != null)
+                    {
+                        magic = MyActions.onCreateMagic(0);
+                        magicSkills.Add(magic);
+                    }
                     uiManager.ShowMagicToggles();
                     break;
                 case 10:
-                    magicSkills.Add(new Magic(vfxManager.MagicData[1]));
+                    if (MyActions.onCreateMagic != null)
+                    {
+                        magic = MyActions.onCreateMagic(1);
+                        magicSkills.Add(magic);
+                    }
                     uiManager.ShowMagicToggles();
                     break;
             }

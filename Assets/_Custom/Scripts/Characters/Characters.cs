@@ -118,7 +118,6 @@ public abstract class Characters : MonoBehaviour
     public int DefensePower { get { return defensePower; } set { defensePower = value; } }
 
 
-    protected VFXManager vfxManager;
     protected UIManager uiManager;
     protected InventoryManager invManager;
     protected PartyManager partyManager;
@@ -137,9 +136,8 @@ public abstract class Characters : MonoBehaviour
         
     }
 
-    public void CharInit(VFXManager vfxM, UIManager uiM, InventoryManager invM, PartyManager partyM)
+    public void CharInit(UIManager uiM, InventoryManager invM, PartyManager partyM)
     {
-        vfxManager = vfxM;
         uiManager = uiM;
         invManager = invM;
         partyManager = partyM;
@@ -228,6 +226,7 @@ public abstract class Characters : MonoBehaviour
     {
         transform.LookAt(curCharTarget.transform);
         anim.SetTrigger("Attack");
+        anim.SetFloat("AttackValue", Random.Range(0, 4));
         Debug.Log("Trigger");
         
         //attack logic
@@ -242,6 +241,7 @@ public abstract class Characters : MonoBehaviour
         if (curCharTarget.CurHP <= 0)
         {
             SetState(CharState.Idle);
+            curCharTarget = null;
             return;
         }
         navAgent.isStopped = true;
@@ -333,11 +333,11 @@ public abstract class Characters : MonoBehaviour
 
     private IEnumerator ShootMagicCast(Magic curMagicCast)
     {
-        if (vfxManager != null)
-            vfxManager.ShootMagic(curMagicCast.ShootID,
-                                  transform.position,
-                                  curCharTarget.transform.position + Vector3.up * 1.2f,
-                                  curMagicCast.ShootTime);
+        if (MyActions.onShootMagic != null)
+            MyActions.onShootMagic(curMagicCast.ShootID,
+                                   transform.position,
+                                   curCharTarget.transform.position + Vector3.up * 1.2f,
+                                   curMagicCast.ShootTime);
 
         yield return new WaitForSeconds(curMagicCast.ShootTime);
 
@@ -352,10 +352,10 @@ public abstract class Characters : MonoBehaviour
 
     private IEnumerator LoadMagicCast(Magic curMagicCast)
     {
-        if (vfxManager != null)
-            vfxManager.LoadMagic(curMagicCast.LoadID,
-                                 transform.position + Vector3.up * 1.2f,
-                                 curMagicCast.LoadTime);
+        if (MyActions.onLoadMagic != null)
+            MyActions.onLoadMagic(curMagicCast.LoadID,
+                                  transform.position + Vector3.up * 1.2f,
+                                  curMagicCast.LoadTime);
 
         yield return new WaitForSeconds(curMagicCast.LoadTime);
 

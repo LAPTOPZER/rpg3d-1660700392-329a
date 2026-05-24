@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CameraController : MonoBehaviour
 {
@@ -13,9 +14,15 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float xInput;
     [SerializeField] private float zInput;
 
+    private InputAction moveAction;
+    private Vector2 moveValue;
+
     [Header("Zoom")]
     [SerializeField] private float zoomModifier;
+    [SerializeField] private float zoomSpeed;
 
+    private InputAction zoomAction;
+    private Vector2 zoomValue;
 
     public static CameraController instance;
 
@@ -27,7 +34,10 @@ public class CameraController : MonoBehaviour
 
     void Start()
     {
-        moveSpeed = 50;
+        moveSpeed = 25f;
+        zoomSpeed = 0.05f;
+        moveAction = InputSystem.actions.FindAction("Move");
+        zoomAction = InputSystem.actions.FindAction("Zoom");
     }
 
     void Update()
@@ -39,8 +49,9 @@ public class CameraController : MonoBehaviour
 
     private void MoveByKB()
     {
-        xInput = Input.GetAxis("Horizontal");
-        zInput = Input.GetAxis("Vertical");
+        moveValue = moveAction.ReadValue<Vector2>();
+        xInput = moveValue.x;
+        zInput = moveValue.y;
 
         Vector3 dir = (transform.forward * zInput) + (transform.right * xInput);
 
@@ -59,21 +70,25 @@ public class CameraController : MonoBehaviour
 
     private void Zoom()
     {
-        zoomModifier = Input.GetAxis("Mouse ScrollWheel");
-        if (Input.GetKey(KeyCode.Z))
-            zoomModifier = -0.1f;
-        if (Input.GetKey(KeyCode.X))
-            zoomModifier = 0.1f;
+        zoomValue = zoomAction.ReadValue<Vector2>();
+        zoomModifier = zoomValue.y * 5f;
 
-        cam.orthographicSize += zoomModifier;
+        if (Keyboard.current.zKey.isPressed)
+            zoomModifier = -1f;
+        if (Keyboard.current.xKey.isPressed)
+            zoomModifier = 1f;
+
+        cam.orthographicSize += zoomModifier * zoomSpeed;
         cam.orthographicSize = Mathf.Clamp(cam.orthographicSize, 4, 10);
     }
 
     private void MoveByMouse()
     {
-        if (Input.mousePosition.x >= Screen.width)
+        Vector2 mousePosition = Mouse.current.position.value;
+
+        if (mousePosition.x >= Screen.width)
             transform.Translate(Vector3.right * moveSpeed * Time.deltaTime, Space.World);
-        if (Input.mousePosition.x <= Screen.width)
+        if (mousePosition.x <= Screen.width)
             transform.Translate(Vector3.left * moveSpeed * Time.deltaTime, Space.World);
     }
 }
