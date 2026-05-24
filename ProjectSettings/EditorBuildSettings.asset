@@ -17,6 +17,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Custom/Scenes/TestScene.unity
     guid: 031da65243d3a994e83c42b2ff69c19e
+  - enabled: 1
+    path: Assets/_Custom/Scenes/Forest01.unity
+    guid: ec1b1635c82512a4b9ce1716adc15f3b
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

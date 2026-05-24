@@ -5,13 +5,28 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField]
     private GameObject[] heroPrefabs;
-    public GameObject[] HerePrefabs { get { return heroPrefabs; } }
+    public GameObject[] HeroPrefabs { get { return heroPrefabs; } }
 
     public static GameManager instance;
 
     void Awake()
     {
         instance = this;
+    }
+
+    void Start()
+    {
+        if (Settings.isNewGame)
+        {
+            Settings.isNewGame = false;
+            GeneratePlayerHero();
+        }
+
+        if (Settings.isWarping)
+        {
+            Settings.isWarping = false;
+            WarpPlayers();
+        }
     }
 
     private void GeneratePlayerHero()
@@ -25,10 +40,16 @@ public class GameManager : MonoBehaviour
 
         Characters hero = heroObj.GetComponent<Characters>();
         PartyManager.instance.Members.Add(hero);
+
+        hero.CharInit(VFXManager.instance, UIManager.instance,
+            InventoryManager.instance, PartyManager.instance);
+
+        InventoryManager.instance.AddItem(hero, 0); //health potion
+        InventoryManager.instance.AddItem(hero, 2); //Shield A
     }
 
-    void Start()
+    private void WarpPlayers()
     {
-        GeneratePlayerHero();
+        PartyManager.instance.LoadAllHeroData();
     }
 }
