@@ -11,6 +11,10 @@ public class Hero : Characters
     public int Level { get { return level; } set { level = value; } }
 
     [SerializeField]
+    private int nextExp;
+    public int NextExp { get { return nextExp; } set { nextExp = value; } }
+
+    [SerializeField]
     private int strength;
     public int Strength { get { return strength; } set { strength = value; } }
 
@@ -91,6 +95,41 @@ public class Hero : Characters
                 InventoryItems[i] = item;
                 return;
             }
+        }
+    }
+
+    public void ReceiveExp(int n)
+    {
+        exp += n;
+        CheckLevel(exp);
+    }
+
+    private void UpdateStat()
+    {
+        attackDamage++;
+        defensePower++;
+        maxHP++;
+
+        //bonus
+        if (strength >= Random.Range(1, 20))
+            attackDamage++;
+
+        if (dexterity >= Random.Range(1, 20))
+            defensePower++;
+
+        if (constitution >= Random.Range(1, 20))
+            maxHP++;
+    }
+
+    private void CheckLevel(int exp)
+    {
+        nextExp = level * 30;
+
+        if (exp >= nextExp)
+        {
+            level++;
+            nextExp = level * 30;
+            UpdateStat();
         }
     }
 }

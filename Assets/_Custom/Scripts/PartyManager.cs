@@ -21,6 +21,9 @@ public class PartyManager : MonoBehaviour
     private int partyMoney = 1000;
     public int PartyMoney { get { return partyMoney; } set { partyMoney = value; } }
 
+    [SerializeField]
+    private int totalExp;
+
     public static PartyManager instance;
 
     private void Awake()
@@ -33,7 +36,7 @@ public class PartyManager : MonoBehaviour
         foreach (Characters c in member)
         {
             c.CharInit(VFXManager.instance,
-                 UIManager.instance, InventoryManager.instance);
+                 UIManager.instance, InventoryManager.instance,this);
         }
 
         SelectSingleHero(0);
@@ -151,5 +154,14 @@ public class PartyManager : MonoBehaviour
             selectChars.Remove(member[id]);
 
         member.Remove(member[id]);
+    }
+
+    public void DistributeTotalExp(int n)
+    {
+        totalExp = n;
+        int eachHeroExp = totalExp / member.Count;
+
+        foreach (Hero hero in member)
+            hero.ReceiveExp(eachHeroExp);
     }
 }
