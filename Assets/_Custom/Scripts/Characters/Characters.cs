@@ -123,6 +123,9 @@ public abstract class Characters : MonoBehaviour
     protected InventoryManager invManager;
     protected PartyManager partyManager;
 
+    private const int ShieldSlotId = 16;
+    private const int WeaponSlotId = 17;
+
     private void Awake()
     {
         navAgent = GetComponent<NavMeshAgent>();
@@ -399,6 +402,8 @@ public abstract class Characters : MonoBehaviour
 
     public void EquipShield(Item item)
     {
+        UnEquipShield();
+
         shieldObj = Instantiate(invManager.ItemPrefabs[item.PrefabID], shieldHand);
 
         shieldObj.transform.localPosition = new Vector3(-8.5f, -4f, 3f);
@@ -420,6 +425,8 @@ public abstract class Characters : MonoBehaviour
 
     public void EquipWeapon(Item item)
     {
+        UnEquipWeapon();
+
         weaponObj = Instantiate(invManager.ItemPrefabs[item.PrefabID], weaponHand);
 
         weaponObj.transform.localPosition = new Vector3(-7.5f, -3f, 8f);
@@ -438,6 +445,43 @@ public abstract class Characters : MonoBehaviour
             mainWeapon = null;
             Destroy(weaponObj);
         }
+    }
+
+    public void RestoreEquippedItemsFromInventory()
+    {
+        RestoreShieldVisual(inventoryItems[ShieldSlotId]);
+        RestoreWeaponVisual(inventoryItems[WeaponSlotId]);
+    }
+
+    private void RestoreShieldVisual(Item item)
+    {
+        if (shieldObj != null)
+            Destroy(shieldObj);
+
+        shield = item;
+
+        if (shield == null)
+            return;
+
+        shieldObj = Instantiate(invManager.ItemPrefabs[shield.PrefabID], shieldHand);
+        shieldObj.transform.localPosition = new Vector3(-8.5f, -4f, 3f);
+        shieldObj.transform.Rotate(-90f, 0f, 180f, Space.Self);
+    }
+
+    private void RestoreWeaponVisual(Item item)
+    {
+        if (weaponObj != null)
+            Destroy(weaponObj);
+
+        mainWeapon = item;
+        weaponPower = mainWeapon == null ? 0 : mainWeapon.Power;
+
+        if (mainWeapon == null)
+            return;
+
+        weaponObj = Instantiate(invManager.ItemPrefabs[mainWeapon.PrefabID], weaponHand);
+        weaponObj.transform.localPosition = new Vector3(-7.5f, -3f, 8f);
+        weaponObj.transform.Rotate(0, 90, -90);
     }
 
     public void ToTalkToNPC(Characters npc)

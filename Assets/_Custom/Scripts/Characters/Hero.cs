@@ -93,7 +93,9 @@ public class Hero : Characters
             else
             {
                 Hero hero = curCharTarget.GetComponent<Hero>();
-                uiManager.PrepareHeroJoinParty(hero);
+
+                if (hero != null && !partyManager.IsPartyMember(hero))
+                    uiManager.PrepareHeroJoinParty(hero);
             }
         }
     }

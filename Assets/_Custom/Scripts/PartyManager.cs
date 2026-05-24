@@ -117,6 +117,24 @@ public class PartyManager : MonoBehaviour
         return 0;
     }
 
+    public bool IsPartyMember(Characters hero)
+    {
+        return member.Contains(hero);
+    }
+
+    private bool HasHeroWithPrefabId(int prefabId)
+    {
+        foreach (Characters character in member)
+        {
+            Hero hero = character as Hero;
+
+            if (hero != null && hero.PrefabID == prefabId)
+                return true;
+        }
+
+        return false;
+    }
+
     public void SelectSingleHeroByToggle(int i)
     {
         //Debug.Log($"Select {i}");
@@ -171,6 +189,14 @@ public class PartyManager : MonoBehaviour
 
     public bool HeroJoinParty(Characters hero)
     {
+        if (hero == null || member.Contains(hero))
+            return false;
+
+        Hero heroToJoin = hero as Hero;
+
+        if (heroToJoin != null && HasHeroWithPrefabId(heroToJoin.PrefabID))
+            return false;
+
         if (member.Count >= 6)
             return false;
 
@@ -189,8 +215,10 @@ public class PartyManager : MonoBehaviour
             heroData[i].prefabId = hero.PrefabID;
             heroData[i].curHp = hero.CurHP;
 
+            heroData[i].magicIds.Clear();
+
             for (int j = 0; j < hero.MagicSkills.Count; j++)
-                heroData[i].magicIds[j] = hero.MagicSkills[j].ID;
+                heroData[i].magicIds.Add(hero.MagicSkills[j].ID);
 
             for (int k = 0; k < hero.InventoryItems.Length; k++)
             {
@@ -208,8 +236,27 @@ public class PartyManager : MonoBehaviour
         }
     }
 
+    private void RemoveSceneCopiesOfLoadedParty()
+    {
+        Hero[] sceneHeroes = FindObjectsByType<Hero>(FindObjectsSortMode.None);
+
+        foreach (Hero sceneHero in sceneHeroes)
+        {
+            for (int i = 0; i < Settings.partyCount; i++)
+            {
+                if (sceneHero.PrefabID == heroData[i].prefabId)
+                {
+                    Destroy(sceneHero.gameObject);
+                    break;
+                }
+            }
+        }
+    }
+
     public void LoadAllHeroData()
     {
+        RemoveSceneCopiesOfLoadedParty();
+
         int enterId = Settings.enterPointId;
         Vector3 pos = MapManager.instance.EnterPoints[enterId].position;
 
@@ -226,6 +273,7 @@ public class PartyManager : MonoBehaviour
             hero.CharInit(VFXManager.instance, UIManager.instance,
                 InventoryManager.instance, this);
             hero.CurHP = heroData[i].curHp;
+            hero.MagicSkills.Clear();
 
             for (int j = 0; j < heroData[i].magicIds.Count; j++)
             {
@@ -246,6 +294,7 @@ public class PartyManager : MonoBehaviour
             hero.Exp = heroData[i].exp;
             hero.Level = heroData[i].level;
             hero.NextExp = heroData[i].nextExp;
+            hero.RestoreEquippedItemsFromInventory();
             member.Add(hero);
         }
     }

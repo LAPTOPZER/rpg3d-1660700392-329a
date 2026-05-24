@@ -871,8 +871,11 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    private void SetupHeroJoinPartyPanel(Hero hero)
+    private bool SetupHeroJoinPartyPanel(Hero hero)
     {
+        if (hero == null || PartyManager.instance.IsPartyMember(hero))
+            return false;
+
         curHeroToJoin = hero;
 
         npcImage.sprite = hero.AvatarPic;
@@ -882,19 +885,22 @@ public class UIManager : MonoBehaviour
 
         btnJoinParty.SetActive(true);
         btnNotJoinParty.SetActive(true);
+        return true;
     }
 
     public void PrepareHeroJoinParty(Hero hero)
     {
         ClearDialogueBox();
-        SetupHeroJoinPartyPanel(hero);
-        ToggleDialogueBox(true);
+
+        if (SetupHeroJoinPartyPanel(hero))
+            ToggleDialogueBox(true);
     }
 
     public void AnswerJoinParty() // map with ButtonJoinParty
     {
-        PartyManager.instance.HeroJoinParty(curHeroToJoin);
-        MapToggleAvatar();
+        if (PartyManager.instance.HeroJoinParty(curHeroToJoin))
+            MapToggleAvatar();
+
         curHeroToJoin = null;
         ToggleDialogueBox(false);
     }
