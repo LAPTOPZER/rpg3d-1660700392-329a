@@ -164,4 +164,16 @@ public class PartyManager : MonoBehaviour
         foreach (Hero hero in member)
             hero.ReceiveExp(eachHeroExp);
     }
+
+    public bool HeroJoinParty(Characters hero)
+    {
+        if (member.Count >= 6)
+            return false;
+
+        hero.CharInit(VFXManager.instance, UIManager.instance,
+            InventoryManager.instance, this);
+
+        member.Add(hero);
+        return true;
+    }
 }

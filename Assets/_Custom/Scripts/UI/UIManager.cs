@@ -94,6 +94,12 @@ public class UIManager : MonoBehaviour
     private TMP_Text btnNotFinishText;
 
     [SerializeField]
+    private GameObject btnJoinParty;
+
+    [SerializeField]
+    private GameObject btnNotJoinParty;
+
+    [SerializeField]
     private Toggle[] toggleAvatar;
     public Toggle[] ToggleAvatar { get { return toggleAvatar; } set { toggleAvatar = value; } }
 
@@ -171,6 +177,9 @@ public class UIManager : MonoBehaviour
 
     [SerializeField]
     private TMP_Text heroNameText;
+
+    [SerializeField]
+    private Hero curHeroToJoin = null;
 
     public static UIManager instance;
 
@@ -359,6 +368,9 @@ public class UIManager : MonoBehaviour
 
         btnNotFinishText.text = "";
         btnNotFinish.SetActive(false);
+
+        btnJoinParty.SetActive(false);
+        btnNotJoinParty.SetActive(false);
     }
 
     private void StartQuestDialogue(Quest quest)
@@ -857,5 +869,39 @@ public class UIManager : MonoBehaviour
             shopMoneyText.text = curShopNpc.NpcMoney.ToString();
             heroMoneyText.text = PartyManager.instance.PartyMoney.ToString();
         }
+    }
+
+    private void SetupHeroJoinPartyPanel(Hero hero)
+    {
+        curHeroToJoin = hero;
+
+        npcImage.sprite = hero.AvatarPic;
+        npcNameText.text = hero.CharName;
+
+        dialogueText.text = "I want to join your party.";
+
+        btnJoinParty.SetActive(true);
+        btnNotJoinParty.SetActive(true);
+    }
+
+    public void PrepareHeroJoinParty(Hero hero)
+    {
+        ClearDialogueBox();
+        SetupHeroJoinPartyPanel(hero);
+        ToggleDialogueBox(true);
+    }
+
+    public void AnswerJoinParty() // map with ButtonJoinParty
+    {
+        PartyManager.instance.HeroJoinParty(curHeroToJoin);
+        MapToggleAvatar();
+        curHeroToJoin = null;
+        ToggleDialogueBox(false);
+    }
+
+    public void AnswerNotJoinParty() // map with ButtonNotJoinParty
+    {
+        curHeroToJoin = null;
+        ToggleDialogueBox(false);
     }
 }
