@@ -130,6 +130,18 @@ public class Hero : Characters
             level++;
             nextExp = level * 30;
             UpdateStat();
+
+            switch (level)
+            {
+                case 5:
+                    magicSkills.Add(new Magic(vfxManager.MagicData[0]));
+                    uiManager.ShowMagicToggles();
+                    break;
+                case 10:
+                    magicSkills.Add(new Magic(vfxManager.MagicData[1]));
+                    uiManager.ShowMagicToggles();
+                    break;
+            }
         }
     }
 }
