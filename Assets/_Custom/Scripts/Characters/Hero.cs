@@ -149,7 +149,7 @@ public class Hero : Characters
 
             switch (level)
             {
-                case 5:
+                case 2:
                     if (MyActions.onCreateMagic != null)
                     {
                         magic = MyActions.onCreateMagic(0);
