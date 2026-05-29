@@ -468,7 +468,7 @@ GameObject:
   - component: {fileID: -2785418899389974198}
   - component: {fileID: -814758915771916555}
   m_Layer: 6
-  m_Name: Goblin_Warrior_Male 1
+  m_Name: Goblin_Warrior_WarChief 1
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -601,11 +601,11 @@ MonoBehaviour:
   charName: 
   state: 0
   ringSelection: {fileID: 0}
-  curHP: 100
-  maxHP: 100
+  curHP: 150
+  maxHP: 150
   curCharTarget: {fileID: 0}
   attackRange: 2
-  attackDamage: 2
+  attackDamage: 3
   attackCoolDown: 2
   attackTimer: 0
   findingRange: 20
@@ -644,7 +644,7 @@ MonoBehaviour:
   shieldHand: {fileID: 444796}
   shieldObj: {fileID: 0}
   defensePower: 0
-  expDrop: 30
+  expDrop: 50
 --- !u!1 &114958
 GameObject:
   m_ObjectHideFlags: 0
@@ -3789,7 +3789,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &480826
 Transform:
   m_ObjectHideFlags: 0
@@ -4804,7 +4804,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &468704
 Transform:
   m_ObjectHideFlags: 0

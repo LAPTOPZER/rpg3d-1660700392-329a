@@ -231,6 +231,7 @@ MonoBehaviour:
   heroPrefabs:
   - {fileID: 162860, guid: d902e2386935ea34aa89cd3e80196277, type: 3}
   - {fileID: 131680, guid: ebe71872483c49447939d1f76736f700, type: 3}
+  - {fileID: 6521842069077383446, guid: e37d188567f9d754294d1994031188b6, type: 3}
 --- !u!114 &5473473297542069240
 MonoBehaviour:
   m_ObjectHideFlags: 0
