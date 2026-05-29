@@ -100,16 +100,18 @@ public class Hero : Characters
         }
     }
 
-    public void SaveItemInInventory(Item item)
+    public int SaveItemInInventory(Item item)
     {
         for (int i = 0; i < 16; i++)
         {
             if (InventoryItems[i] == null)
             {
                 InventoryItems[i] = item;
-                return;
+                return i;
             }
         }
+
+        return -1;
     }
 
     public void ReceiveExp(int n)

@@ -1,8 +1,9 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ItemInShop : MonoBehaviour
+public class ItemInShop : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField]
     private int id;
@@ -31,5 +32,13 @@ public class ItemInShop : MonoBehaviour
         iconToggle.targetGraphic.GetComponent<Image>().sprite = item.Icon;
         itemText.text = item.ItemName;
         priceText.text = ((int)(item.NormalPrice * discount)).ToString();
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (iconToggle == null || !iconToggle.interactable)
+            return;
+
+        iconToggle.isOn = !iconToggle.isOn;
     }
 }

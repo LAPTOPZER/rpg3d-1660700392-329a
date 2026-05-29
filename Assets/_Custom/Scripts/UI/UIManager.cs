@@ -777,9 +777,36 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    private void PrepareShopRaycastTargets()
+    {
+        HashSet<Graphic> interactiveGraphics = new HashSet<Graphic>();
+
+        foreach (Selectable selectable in shopPanel.GetComponentsInChildren<Selectable>(true))
+        {
+            if (selectable.targetGraphic != null)
+                interactiveGraphics.Add(selectable.targetGraphic);
+        }
+
+        foreach (ItemInShop itemInShop in shopPanel.GetComponentsInChildren<ItemInShop>(true))
+        {
+            Graphic itemGraphic = itemInShop.GetComponent<Graphic>();
+            if (itemGraphic != null)
+                interactiveGraphics.Add(itemGraphic);
+        }
+
+        foreach (Graphic graphic in shopPanel.GetComponentsInChildren<Graphic>(true))
+            graphic.raycastTarget = interactiveGraphics.Contains(graphic);
+    }
+
     public void ToggleShopPanel(bool flag)
     {
         shopPanel.SetActive(flag);
+
+        if (!flag)
+        {
+            blackImage.SetActive(false);
+            ClearShopPanel();
+        }
     }
 
     public void PrepareShopPanel(Npc npc, Hero hero)
@@ -788,11 +815,15 @@ public class UIManager : MonoBehaviour
         ClearShopPanel();
         SetupShopItems(npc);
         SetupPartyItems(hero);
+        PrepareShopRaycastTargets();
         ToggleShopPanel(true);
     }
 
     public void SellItemToShop()
     {
+        if (curShopNpc == null || curShopHero == null)
+            return;
+
         totalPrice = 0;
         List<GameObject> toSellCardList = new List<GameObject>();
 
@@ -816,12 +847,13 @@ public class UIManager : MonoBehaviour
                 obj.transform.SetParent(shopListParent);
                 ItemInShop itemInShop = obj.GetComponent<ItemInShop>();
                 itemInShop.IconToggle.isOn = false;
-                itemInShop.SetupItemInShop(this, 1f);
 
                 partyItemList.Remove(obj);
                 shopItemList.Add(obj);
                 curShopHero.InventoryItems[itemInShop.ID] = null;
                 curShopNpc.ShopItems.Add(itemInShop.Item);
+                itemInShop.ID = curShopNpc.ShopItems.Count - 1;
+                itemInShop.SetupItemInShop(this, 1f);
             }
 
             curShopNpc.NpcMoney -= totalPrice;
@@ -832,8 +864,24 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    private int CountOpenInventorySlots(Hero hero)
+    {
+        int count = 0;
+
+        for (int i = 0; i < 16; i++)
+        {
+            if (hero.InventoryItems[i] == null)
+                count++;
+        }
+
+        return count;
+    }
+
     public void BuyItemFromShop()
     {
+        if (curShopNpc == null || curShopHero == null)
+            return;
+
         totalCost = 0;
         List<GameObject> toBuyCardList = new List<GameObject>();
 
@@ -850,19 +898,25 @@ public class UIManager : MonoBehaviour
         if (toBuyCardList.Count == 0)
             return;
 
-        if (PartyManager.instance.PartyMoney >= totalCost)
+        if (PartyManager.instance.PartyMoney >= totalCost
+            && CountOpenInventorySlots(curShopHero) >= toBuyCardList.Count)
         {
             foreach (GameObject obj in toBuyCardList)
             {
-                obj.transform.SetParent(partyListParent);
                 ItemInShop itemInShop = obj.GetComponent<ItemInShop>();
+                int inventoryId = curShopHero.SaveItemInInventory(itemInShop.Item);
+
+                if (inventoryId == -1)
+                    continue;
+
+                obj.transform.SetParent(partyListParent);
                 itemInShop.IconToggle.isOn = false;
-                itemInShop.SetupItemInShop(this, 0.8f);
 
                 shopItemList.Remove(obj);
                 partyItemList.Add(obj);
                 curShopNpc.ShopItems.Remove(itemInShop.Item);
-                curShopHero.SaveItemInInventory(itemInShop.Item);
+                itemInShop.ID = inventoryId;
+                itemInShop.SetupItemInShop(this, 0.8f);
             }
             curShopNpc.NpcMoney += totalCost;
             PartyManager.instance.PartyMoney -= totalCost;
